@@ -62,19 +62,19 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-3 row">
-                            <label for="profile_image" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Profile Photo')); ?></label>
+                            <label for="image" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Profile Photo')); ?></label>
 
                             <div class="col-md-6">
-                                <input id="profile_image" type="file" class="form-control <?php $__errorArgs = ['profile_image'];
+                                <input id="image" type="file" class="form-control <?php $__errorArgs = ['image'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" name="profile_image" accept="image/*">
+unset($__errorArgs, $__bag); ?>" name="image" accept="image/*">
 
-                                <?php $__errorArgs = ['profile_image'];
+                                <?php $__errorArgs = ['image'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -85,7 +85,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                                 <div class="mt-2">
-                                    <img src="<?php echo e($user->profile_image ? asset('storage/' . $user->profile_image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?s=120'); ?>" alt="<?php echo e($user->name); ?>" class="rounded" style="width:96px;height:96px;object-fit:cover;">
+                                    <img src="<?php echo e($user->image ? asset('storage/' . $user->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?s=120'); ?>" alt="<?php echo e($user->name); ?>" class="rounded" style="width:96px;height:96px;object-fit:cover;">
                                 </div>
                             </div>
                         </div>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Show;
 use App\Models\Episode;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,6 +15,7 @@ class HomeController extends Controller
         $this->middleware('auth', ['except' => ['index', 'search']]);
     }
 
+
     public function index()
     {
         // Show the 5 most recently created episodes across all shows (top latest)
@@ -21,7 +24,15 @@ class HomeController extends Controller
             ->take(5)
             ->get();
 
-        return view('home', compact('latestEpisodes'));
+        // Get users who have uploaded profile images (excluding guests and admin users)
+        $usersWithImages = User::whereNotNull('image')
+            ->where('image', '!=', '')
+            ->where('role', '!=', 'admin') // Exclude admin users from the gallery
+            ->orderBy('created_at', 'desc')
+            ->take(12) // Limit to 12 users for the gallery
+            ->get();
+
+        return view('home', compact('latestEpisodes', 'usersWithImages'));
     }
 
     public function search(Request $request)

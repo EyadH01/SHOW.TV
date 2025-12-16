@@ -10,7 +10,13 @@
                         <div class="alert alert-success"><?php echo e(session('status')); ?></div>
                     <?php endif; ?>
 
-                    <img src="<?php echo e($user->image ? asset('storage/' . $user->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?s=200'); ?>" alt="<?php echo e($user->name); ?>" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;">
+                    <?php if($user->image): ?>
+                        <img src="<?php echo e(asset('storage/' . $user->image)); ?>" alt="<?php echo e($user->name); ?>" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;">
+                    <?php else: ?>
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3" style="width:150px;height:150px;">
+                            <i class="fas fa-user fa-3x text-muted"></i>
+                        </div>
+                    <?php endif; ?>
                     <h4><?php echo e($user->name); ?></h4>
                     <p class="text-muted"><?php echo e($user->email); ?></p>
 

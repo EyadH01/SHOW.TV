@@ -26,10 +26,15 @@
                     @if(auth()->user()->isAdmin())
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.shows.index') }}">Admin</a></li>
                     @endif
+
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center" href="{{ route('profile.show') }}">
-                            <img src="{{ auth()->user()->image ? asset('storage/' . auth()->user()->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim(auth()->user()->email))) . '?s=32' }}" alt="{{ auth()->user()->name }}" class="rounded-circle me-2" style="width:32px;height:32px;object-fit:cover;">
-                            {{ auth()->user()->name }}
+                            @if(auth()->user()->image)
+                                <img src="{{ Storage::url(auth()->user()->image) }}" alt="{{ auth()->user()->name }}" class="rounded me-2" style="width:32px;height:32px;object-fit:contain; border: 2px solid rgba(255,255,255,0.3);">
+                            @else
+                                <i class="fas fa-user-circle me-2" style="font-size: 24px; color: rgba(255,255,255,0.7);"></i>
+                            @endif
+                            <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
