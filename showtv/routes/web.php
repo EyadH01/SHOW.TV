@@ -25,8 +25,16 @@ Route::middleware('auth')->group(function () {
     
     // Profile routes
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/dashboard', [\App\Http\Controllers\ProfileController::class, 'dashboard'])->name('profile.dashboard');
     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('profile.settings');
+    Route::post('/profile/settings', [\App\Http\Controllers\ProfileController::class, 'updateSettings'])->name('profile.settings.update');
+    Route::get('/profile/sessions', [\App\Http\Controllers\ProfileController::class, 'sessions'])->name('profile.sessions');
+    Route::delete('/profile/sessions/{session}', [\App\Http\Controllers\ProfileController::class, 'destroySession'])->name('profile.sessions.destroy');
+    Route::get('/profile/activity', [\App\Http\Controllers\ProfileController::class, 'activity'])->name('profile.activity');
+    Route::post('/profile/export', [\App\Http\Controllers\ProfileController::class, 'export'])->name('profile.export');
+    Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.delete');
 });
 
 Route::get('/episodes/{episode}', [EpisodeController::class, 'show'])->name('episodes.show');

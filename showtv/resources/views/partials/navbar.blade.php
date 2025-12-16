@@ -27,8 +27,8 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.shows.index') }}">Admin</a></li>
                     @endif
 
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ route('profile.show') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
                             @if(auth()->user()->image)
                                 <img src="{{ Storage::url(auth()->user()->image) }}" alt="{{ auth()->user()->name }}" class="rounded me-2" style="width:32px;height:32px;object-fit:contain; border: 2px solid rgba(255,255,255,0.3);">
                             @else
@@ -36,12 +36,19 @@
                             @endif
                             <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button class="btn btn-link nav-link">Logout</button>
-                        </form>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('profile.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>{{ __('Dashboard') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i class="fas fa-user me-2"></i>{{ __('Profile') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-edit me-2"></i>{{ __('Edit Profile') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}"><i class="fas fa-cog me-2"></i>{{ __('Settings') }}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>{{ __('Logout') }}</button>
+                                </form>
+                            </li>
+                        </ul>
                     </li>
                 @endguest
             </ul>

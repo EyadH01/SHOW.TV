@@ -14,6 +14,42 @@ class ProfileController extends Controller
         $this->middleware('auth');
     }
 
+    // Show user dashboard
+    public function dashboard()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Get user statistics
+        $stats = [
+            'total_shows' => \App\Models\Show::count(),
+            'total_episodes' => \App\Models\Episode::count(),
+            'follows' => $user->followedShows()->count(),
+            'likes' => $user->likedEpisodes()->count(),
+        ];
+
+        // Calculate profile completion
+        $profileCompletion = $this->calculateProfileCompletion($user);
+
+        // Get recent activities
+        $recentActivities = \App\Models\UserActivityLog::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Get active sessions
+        $activeSessions = \App\Models\UserSession::where('user_id', $user->id)
+            ->where('last_activity', '>', now()->subMinutes(30))
+            ->orderBy('last_activity', 'desc')
+            ->get()
+            ->map(function ($session) use ($user) {
+                $session->is_current = $session->id === session('user_session_id');
+                return $session;
+            });
+
+        return view('profile.dashboard', compact('user', 'stats', 'profileCompletion', 'recentActivities', 'activeSessions'));
+    }
+
     // Show user profile
     public function show()
     {
@@ -146,5 +182,131 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('welcome')->with('status', 'Your account has been deleted successfully.');
+    }
+
+    // Show settings form
+    public function settings()
+    {
+        $user = Auth::user();
+        return view('profile.settings', compact('user'));
+    }
+
+    // Update settings
+    public function updateSettings(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $data = $request->validate([
+            'profile_public' => 'nullable|boolean',
+            'show_email' => 'nullable|boolean',
+            'show_phone' => 'nullable|boolean',
+            'show_location' => 'nullable|boolean',
+            'show_social_media' => 'nullable|boolean',
+            'email_notifications' => 'nullable|boolean',
+            'sms_notifications' => 'nullable|boolean',
+            'login_alerts' => 'nullable|boolean',
+            'security_alerts' => 'nullable|boolean',
+            'marketing_emails' => 'nullable|boolean',
+            'two_factor_enabled' => 'nullable|boolean',
+            'session_timeout' => 'nullable|integer|min:30|max:480',
+            'notify_new_devices' => 'nullable|boolean',
+        ]);
+
+        // Update user preferences
+        $preferences = $user->userPreference;
+        if (!$preferences) {
+            $preferences = new \App\Models\UserPreference();
+            $preferences->user_id = $user->id;
+        }
+        $preferences->fill($data);
+        $preferences->save();
+
+        // Update user two_factor_enabled
+        $user->update(['two_factor_enabled' => $data['two_factor_enabled'] ?? false]);
+
+        return redirect()->route('profile.settings')->with('status', 'Settings updated successfully!');
+    }
+
+    // Show sessions
+    public function sessions()
+    {
+        $user = Auth::user();
+        $sessions = \App\Models\UserSession::where('user_id', $user->id)
+            ->orderBy('last_activity', 'desc')
+            ->get()
+            ->map(function ($session) use ($user) {
+                $session->is_current = $session->id === session('user_session_id');
+                return $session;
+            });
+
+        return view('profile.sessions', compact('user', 'sessions'));
+    }
+
+    // Destroy session
+    public function destroySession(Request $request, $sessionId)
+    {
+        $user = Auth::user();
+        $session = \App\Models\UserSession::where('user_id', $user->id)
+            ->where('id', $sessionId)
+            ->first();
+
+        if ($session && !$session->is_current) {
+            $session->delete();
+        }
+
+        return redirect()->route('profile.sessions')->with('status', 'Session ended successfully!');
+    }
+
+    // Show activity log
+    public function activity()
+    {
+        $user = Auth::user();
+        $activities = \App\Models\UserActivityLog::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return view('profile.activity', compact('user', 'activities'));
+    }
+
+    // Export user data
+    public function export(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $data = [
+            'user' => $user->toArray(),
+            'preferences' => $user->userPreference,
+            'activities' => $user->activityLogs()->orderBy('created_at', 'desc')->get(),
+            'sessions' => $user->sessions()->orderBy('last_activity', 'desc')->get(),
+            'followed_shows' => $user->followedShows,
+            'liked_episodes' => $user->likedEpisodes,
+        ];
+
+        $filename = 'user-data-' . $user->id . '-' . now()->format('Y-m-d') . '.json';
+
+        return response()->json($data, 200, [
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        ]);
+    }
+
+    // Calculate profile completion percentage
+    private function calculateProfileCompletion($user)
+    {
+        $fields = [
+            'name', 'email', 'phone', 'bio', 'date_of_birth', 'gender',
+            'country', 'city', 'address', 'website', 'facebook_url',
+            'twitter_url', 'instagram_url', 'linkedin_url', 'youtube_url'
+        ];
+
+        $completed = 0;
+        foreach ($fields as $field) {
+            if (!empty($user->$field)) {
+                $completed++;
+            }
+        }
+
+        return round(($completed / count($fields)) * 100);
     }
 }
