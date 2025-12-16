@@ -54,10 +54,10 @@ class EpisodeController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'duration' => 'nullable|integer|min:1',
-            'airing_time' => 'nullable|date',
+            'airing_time' => 'nullable|string|max:255',
             'video_url' => 'nullable|url',
             'video_file' => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska|max:512000',
-            'youtube_video_id' => 'nullable|string|max:50',
+            'youtube_video_id' => 'nullable|string|max:100',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -108,9 +108,9 @@ class EpisodeController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'duration' => 'nullable|integer|min:1',
-            'airing_time' => 'nullable|date',
+            'airing_time' => 'nullable|string|max:255',
             'video_url' => 'nullable|url',
-            'youtube_video_id' => 'nullable|string|max:50',
+            'youtube_video_id' => 'nullable|string|max:100',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 

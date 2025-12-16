@@ -29,20 +29,21 @@ class ProfileController extends Controller
     // Update profile (name, email, profile_image)
     public function update(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
-            'profile_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
 
-        if ($request->hasFile('profile_image')) {
-            $path = $request->file('profile_image')->store('profile-images', 'public');
-            $data['profile_image'] = $path;
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('profile-images', 'public');
+            $data['image'] = $path;
         }
 
-        $user->update($data);
+        $user->fill($data)->save();
 
         return redirect()->route('profile.show')->with('status', __('messages.profile_updated'));
     }

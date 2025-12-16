@@ -7,6 +7,9 @@ use App\Http\Controllers\ShowController;
 use App\Http\Controllers\EpisodeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', function () {
+    return redirect()->route('home');
+})->name('dashboard');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 Route::get('/shows', [ShowController::class, 'index'])->name('shows.index');
@@ -17,6 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/shows/{show}/follow', [ShowController::class, 'unfollow'])->name('shows.unfollow');
 
     Route::post('/episodes/{episode}/like', [EpisodeController::class, 'like'])->name('episodes.like');
+    Route::post('/episodes/{episode}/dislike', [EpisodeController::class, 'dislike'])->name('episodes.dislike');
     Route::delete('/episodes/{episode}/like', [EpisodeController::class, 'unlike'])->name('episodes.unlike');
     
     // Profile routes
@@ -30,6 +34,8 @@ Route::get('/episodes/{episode}', [EpisodeController::class, 'show'])->name('epi
 Auth::routes();
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminController::class, 'dashboard'])->name('dashboard');
+
     // Shows Management
     Route::resource('shows', \App\Http\Controllers\Admin\ShowController::class);
 

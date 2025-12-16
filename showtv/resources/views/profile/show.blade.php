@@ -12,7 +12,7 @@
                         <div class="alert alert-success">{{ session('status') }}</div>
                     @endif
 
-                    <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?s=200' }}" alt="{{ $user->name }}" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;">
+                    <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?s=200' }}" alt="{{ $user->name }}" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;">
                     <h4>{{ $user->name }}</h4>
                     <p class="text-muted">{{ $user->email }}</p>
 

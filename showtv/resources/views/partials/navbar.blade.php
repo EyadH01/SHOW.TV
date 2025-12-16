@@ -27,6 +27,12 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.shows.index') }}">Admin</a></li>
                     @endif
                     <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ route('profile.show') }}">
+                            <img src="{{ auth()->user()->image ? asset('storage/' . auth()->user()->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim(auth()->user()->email))) . '?s=32' }}" alt="{{ auth()->user()->name }}" class="rounded-circle me-2" style="width:32px;height:32px;object-fit:cover;">
+                            {{ auth()->user()->name }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <button class="btn btn-link nav-link">Logout</button>

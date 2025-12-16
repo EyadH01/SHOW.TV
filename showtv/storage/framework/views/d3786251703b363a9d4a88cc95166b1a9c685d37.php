@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <!-- Netflix-style Video Player Page -->
 <div class="video-player-page" style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <!-- Episode Header -->
@@ -9,74 +7,84 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="episode-info">
-                        <h1 class="episode-title text-white mb-2">{{ $episode->title }}</h1>
+                        <h1 class="episode-title text-white mb-2"><?php echo e($episode->title); ?></h1>
                         <div class="episode-meta text-white-50 mb-3">
                             <span class="me-3">
                                 <i class="fas fa-tv"></i>
-                                <a href="{{ route('shows.show', $episode->show) }}" class="text-white text-decoration-none ms-1">
-                                    {{ $episode->show->title }}
+                                <a href="<?php echo e(route('shows.show', $episode->show)); ?>" class="text-white text-decoration-none ms-1">
+                                    <?php echo e($episode->show->title); ?>
+
                                 </a>
                             </span>
                             <span class="me-3">
-                                <i class="fas fa-clock"></i> {{ $episode->duration }} {{ __('messages.minutes') }}
+                                <i class="fas fa-clock"></i> <?php echo e($episode->duration); ?> <?php echo e(__('messages.minutes')); ?>
+
                             </span>
                             <span>
-                                <i class="fas fa-calendar"></i> {{ $episode->airing_time }}
+                                <i class="fas fa-calendar"></i> <?php echo e($episode->airing_time); ?>
+
                             </span>
                         </div>
                         <p class="episode-description text-white-75 mb-0" style="max-width: 600px; line-height: 1.6;">
-                            {{ $episode->description }}
+                            <?php echo e($episode->description); ?>
+
                         </p>
                     </div>
                 </div>
                 <div class="col-md-4 text-end">
                     <!-- Back Button -->
-                    <a href="{{ route('shows.show', $episode->show) }}" class="btn btn-outline-light me-2">
-                        <i class="fas fa-arrow-left"></i> {{ __('messages.back_to_series') }}
+                    <a href="<?php echo e(route('shows.show', $episode->show)); ?>" class="btn btn-outline-light me-2">
+                        <i class="fas fa-arrow-left"></i> <?php echo e(__('messages.back_to_series')); ?>
+
                     </a>
 
                     <!-- Reactions -->
-                    @auth
+                    <?php if(auth()->guard()->check()): ?>
                         <div class="btn-group" role="group">
-                            @if($likeStatus === 'like')
-                                <form action="{{ route('episodes.unlike', $episode) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
+                            <?php if($likeStatus === 'like'): ?>
+                                <form action="<?php echo e(route('episodes.unlike', $episode)); ?>" method="POST" class="d-inline">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('DELETE'); ?>
                                     <button class="btn btn-success btn-sm">
-                                        <i class="fas fa-thumbs-up"></i> {{ $episode->likes }}
-                                    </button>
-                                </form>
-                            @else
-                                <form action="{{ route('episodes.like', $episode) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button class="btn btn-outline-light btn-sm">
-                                        <i class="fas fa-thumbs-up"></i> {{ $episode->likes }}
-                                    </button>
-                                </form>
-                            @endif
+                                        <i class="fas fa-thumbs-up"></i> <?php echo e($episode->likes); ?>
 
-                            @if($likeStatus === 'dislike')
-                                <form action="{{ route('episodes.unlike', $episode) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-thumbs-down"></i> {{ $episode->dislikes }}
                                     </button>
                                 </form>
-                            @else
-                                <form action="{{ route('episodes.dislike', $episode) }}" method="POST" class="d-inline">
-                                    @csrf
+                            <?php else: ?>
+                                <form action="<?php echo e(route('episodes.like', $episode)); ?>" method="POST" class="d-inline">
+                                    <?php echo csrf_field(); ?>
                                     <button class="btn btn-outline-light btn-sm">
-                                        <i class="fas fa-thumbs-down"></i> {{ $episode->dislikes }}
+                                        <i class="fas fa-thumbs-up"></i> <?php echo e($episode->likes); ?>
+
                                     </button>
                                 </form>
-                            @endif
+                            <?php endif; ?>
+
+                            <?php if($likeStatus === 'dislike'): ?>
+                                <form action="<?php echo e(route('episodes.unlike', $episode)); ?>" method="POST" class="d-inline">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('DELETE'); ?>
+                                    <button class="btn btn-danger btn-sm">
+                                        <i class="fas fa-thumbs-down"></i> <?php echo e($episode->dislikes); ?>
+
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <form action="<?php echo e(route('episodes.dislike', $episode)); ?>" method="POST" class="d-inline">
+                                    <?php echo csrf_field(); ?>
+                                    <button class="btn btn-outline-light btn-sm">
+                                        <i class="fas fa-thumbs-down"></i> <?php echo e($episode->dislikes); ?>
+
+                                    </button>
+                                </form>
+                            <?php endif; ?>
                         </div>
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-sign-in-alt"></i> {{ __('messages.login_to_rate') }}
+                    <?php else: ?>
+                        <a href="<?php echo e(route('login')); ?>" class="btn btn-warning btn-sm">
+                            <i class="fas fa-sign-in-alt"></i> <?php echo e(__('messages.login_to_rate')); ?>
+
                         </a>
-                    @endauth
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -89,8 +97,8 @@
                 <div class="col-lg-10">
                     <!-- Video Player Container -->
                     <div class="video-player-container mb-4" style="border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-                        @if($episode->video_url)
-                            @php
+                        <?php if($episode->video_url): ?>
+                            <?php
                                 $isYoutube = str_contains($episode->video_url, 'youtube.com') || str_contains($episode->video_url, 'youtu.be') || str_contains($episode->video_url, 'youtube');
                                 $embedUrl = null;
                                 // Normalize local video path: allow '/storage/...' or 'storage/...' or plain path
@@ -111,78 +119,82 @@
                                     }
                                 }
 
-                            @endphp
-                            @if($embedUrl)
+                            ?>
+                            <?php if($embedUrl): ?>
                                 <!-- YouTube Video -->
                                 <div class="ratio ratio-16x9">
-                                    <iframe src="{{ $embedUrl }}" allowfullscreen style="border: none;"></iframe>
+                                    <iframe src="<?php echo e($embedUrl); ?>" allowfullscreen style="border: none;"></iframe>
                                 </div>
-                            @elseif($localPath)
+                            <?php elseif($localPath): ?>
                                 <!-- Local Video File with Netflix-style player -->
                                 <div class="ratio ratio-16x9">
-                                    <video controls class="w-100 h-100" style="object-fit: contain;" poster="{{ $episode->show->wallpaper ?: asset('images/video-poster.jpg') }}">
-                                        <source src="{{ $localPath }}" type="video/mp4">
-                                        <source src="{{ $localPath }}" type="video/avi">
-                                        <source src="{{ $localPath }}" type="video/mkv">
-                                        {{ __('messages.browser_not_support_video') }}
+                                    <video controls class="w-100 h-100" style="object-fit: contain;" poster="<?php echo e($episode->show->wallpaper ?: asset('images/video-poster.jpg')); ?>">
+                                        <source src="<?php echo e($localPath); ?>" type="video/mp4">
+                                        <source src="<?php echo e($localPath); ?>" type="video/avi">
+                                        <source src="<?php echo e($localPath); ?>" type="video/mkv">
+                                        <?php echo e(__('messages.browser_not_support_video')); ?>
+
                                     </video>
                                 </div>
-                            @else
+                            <?php else: ?>
                                 <!-- Unsupported video URL -->
                                 <div class="ratio ratio-16x9 bg-dark d-flex align-items-center justify-content-center">
                                     <div class="text-center text-white">
                                         <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                                        <h5>{{ __('messages.unsupported_video_format') }}</h5>
-                                        <p class="text-white-75">{{ $episode->video_url }}</p>
+                                        <h5><?php echo e(__('messages.unsupported_video_format')); ?></h5>
+                                        <p class="text-white-75"><?php echo e($episode->video_url); ?></p>
                                     </div>
                                 </div>
-                            @endif
-                        @elseif($episode->youtube_video_id)
+                            <?php endif; ?>
+                        <?php elseif($episode->youtube_video_id): ?>
                             <!-- YouTube Video by ID -->
                             <div class="ratio ratio-16x9">
-                                <iframe src="https://www.youtube.com/embed/{{ $episode->youtube_video_id }}" allowfullscreen style="border: none;"></iframe>
+                                <iframe src="https://www.youtube.com/embed/<?php echo e($episode->youtube_video_id); ?>" allowfullscreen style="border: none;"></iframe>
                             </div>
-                        @else
+                        <?php else: ?>
                             <!-- No video available - Netflix style placeholder -->
                             <div class="ratio ratio-16x9 bg-dark d-flex align-items-center justify-content-center">
                                 <div class="text-center text-white">
                                     <div class="mb-4">
                                         <i class="fas fa-play-circle fa-5x text-white-50"></i>
                                     </div>
-                                    <h3 class="mb-3">{{ __('messages.no_video_available') }}</h3>
-                                    <p class="text-white-75 mb-4">{{ __('messages.upload_video_admin') }}</p>
+                                    <h3 class="mb-3"><?php echo e(__('messages.no_video_available')); ?></h3>
+                                    <p class="text-white-75 mb-4"><?php echo e(__('messages.upload_video_admin')); ?></p>
                                     <a href="https://www.youtube.com/@royatv" target="_blank" class="btn btn-danger btn-lg">
-                                        <i class="fab fa-youtube"></i> {{ __('messages.watch_on_roya') }}
+                                        <i class="fab fa-youtube"></i> <?php echo e(__('messages.watch_on_roya')); ?>
+
                                     </a>
                                 </div>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
 
                     <!-- Episode Actions -->
                     <div class="episode-actions d-flex justify-content-between align-items-center">
                         <div class="episode-navigation">
-                            @php
+                            <?php
                                 $prevEpisode = $episode->show->episodes->where('id', '<', $episode->id)->sortByDesc('id')->first();
                                 $nextEpisode = $episode->show->episodes->where('id', '>', $episode->id)->sortBy('id')->first();
-                            @endphp
+                            ?>
 
-                            @if($prevEpisode)
-                                <a href="{{ route('episodes.show', $prevEpisode) }}" class="btn btn-outline-light me-2">
-                                    <i class="fas fa-chevron-right"></i> {{ __('messages.previous_episode') }}
-                                </a>
-                            @endif
+                            <?php if($prevEpisode): ?>
+                                <a href="<?php echo e(route('episodes.show', $prevEpisode)); ?>" class="btn btn-outline-light me-2">
+                                    <i class="fas fa-chevron-right"></i> <?php echo e(__('messages.previous_episode')); ?>
 
-                            @if($nextEpisode)
-                                <a href="{{ route('episodes.show', $nextEpisode) }}" class="btn btn-outline-light">
-                                    {{ __('messages.next_episode') }} <i class="fas fa-chevron-left"></i>
                                 </a>
-                            @endif
+                            <?php endif; ?>
+
+                            <?php if($nextEpisode): ?>
+                                <a href="<?php echo e(route('episodes.show', $nextEpisode)); ?>" class="btn btn-outline-light">
+                                    <?php echo e(__('messages.next_episode')); ?> <i class="fas fa-chevron-left"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
 
                         <div class="episode-share">
                             <button class="btn btn-outline-light" onclick="shareEpisode()">
-                                <i class="fas fa-share"></i> {{ __('messages.share') }}
+                                <i class="fas fa-share"></i> <?php echo e(__('messages.share')); ?>
+
                             </button>
                         </div>
                     </div>
@@ -194,23 +206,23 @@
     <!-- More Episodes Section -->
     <div class="more-episodes py-5 bg-black">
         <div class="container-fluid">
-            <h3 class="text-white mb-4">{{ __('messages.more_episodes') }}</h3>
+            <h3 class="text-white mb-4"><?php echo e(__('messages.more_episodes')); ?></h3>
             <div class="row">
-                @foreach($episode->show->episodes->where('id', '!=', $episode->id)->take(8) as $ep)
+                <?php $__currentLoopData = $episode->show->episodes->where('id', '!=', $episode->id)->take(8); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ep): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="col-md-3 col-sm-6 mb-4">
-                        <div class="episode-card position-relative" style="border-radius: 8px; overflow: hidden; cursor: pointer;" onclick="window.location.href='{{ route('episodes.show', $ep) }}'">
-                            <div class="episode-thumbnail" style="height: 180px; background: url('{{ $ep->thumbnail }}') center/cover no-repeat; display: flex; align-items: center; justify-content: center;">
+                        <div class="episode-card position-relative" style="border-radius: 8px; overflow: hidden; cursor: pointer;" onclick="window.location.href='<?php echo e(route('episodes.show', $ep)); ?>'">
+                            <div class="episode-thumbnail" style="height: 180px; background: url('<?php echo e($ep->thumbnail); ?>') center/cover no-repeat; display: flex; align-items: center; justify-content: center;">
                                 <div class="episode-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;">
                                     <i class="fas fa-play fa-3x text-white"></i>
                                 </div>
                             </div>
                             <div class="episode-info p-3 bg-dark text-white">
-                                <h6 class="mb-1">{{ Str::limit($ep->title, 30) }}</h6>
-                                <small class="text-white-50">{{ $ep->duration }} {{ __('messages.minutes') }}</small>
+                                <h6 class="mb-1"><?php echo e(Str::limit($ep->title, 30)); ?></h6>
+                                <small class="text-white-50"><?php echo e($ep->duration); ?> <?php echo e(__('messages.minutes')); ?></small>
                             </div>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </div>
@@ -247,7 +259,7 @@ function shareEpisode() {
     } else {
         // Fallback for browsers that don't support Web Share API
         navigator.clipboard.writeText(url).then(() => {
-            alert('{{ __("messages.link_copied") }}');
+            alert('<?php echo e(__("messages.link_copied")); ?>');
         });
     }
 }
@@ -259,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Auto-play next episode when current ends (optional)
         video.addEventListener('ended', function() {
             const nextBtn = document.querySelector('a[href*="next-episode"]');
-            if (nextBtn && confirm('{{ __("messages.play_next_episode") }}')) {
+            if (nextBtn && confirm('<?php echo e(__("messages.play_next_episode")); ?>')) {
                 window.location.href = nextBtn.href;
             }
         });
@@ -348,4 +360,6 @@ video:fullscreen {
     background: black;
 }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/eyadhs/Downloads/SHOW.TV_f/showtv_complete/showtv/resources/views/episodes/show.blade.php ENDPATH**/ ?>

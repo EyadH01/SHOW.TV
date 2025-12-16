@@ -11,21 +11,6 @@
 </div>
 
 <div class="container">
-    @auth
-    <div class="d-flex justify-content-end mb-3">
-        @php
-            $u = Auth::user();
-            $avatar = $u->profile_image ? asset('storage/' . $u->profile_image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($u->email))) . '?s=120';
-        @endphp
-        <a href="{{ route('profile.show') }}" class="d-flex align-items-center text-decoration-none">
-            <img src="{{ $avatar }}" alt="{{ $u->name }}" class="rounded-circle me-2" style="width:56px;height:56px;object-fit:cover;border:2px solid #ccc;">
-            <div>
-                <div class="fw-bold">{{ $u->name }}</div>
-                <small class="text-muted">{{ __('profile.view_account') }}</small>
-            </div>
-        </a>
-    </div>
-    @endauth
     <div class="row">
         @forelse($latestEpisodes as $episode)
             <div class="col-md-4 col-lg-3 mb-4">
