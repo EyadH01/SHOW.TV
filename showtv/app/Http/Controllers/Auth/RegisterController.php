@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Models\UserSession;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
