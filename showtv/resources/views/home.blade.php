@@ -3,10 +3,40 @@
 @section('content')
 <div class="hero-section">
     <div class="container">
-        <h1 class="display-4 mb-3">
-            <i class="fas fa-star"></i> {{ __('home.latest_episodes') }}
-        </h1>
-        <p class="lead text-muted">{{ __('home.latest_episodes_desc') }}</p>
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-star"></i> {{ __('home.latest_episodes') }}
+                </h1>
+                <p class="lead text-muted">{{ __('home.latest_episodes_desc') }}</p>
+            </div>
+            <!-- User Profile Card (Facebook Style) -->
+            @auth
+            <div class="col-md-4">
+                <div class="card profile-card shadow-lg" style="border: none; border-radius: 12px;">
+                    <div class="profile-cover" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 60px;"></div>
+                    <div class="card-body text-center" style="margin-top: -40px;">
+                        <div class="profile-img-wrapper">
+                            <img src="{{ auth()->user()->image ? asset('storage/' . auth()->user()->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim(auth()->user()->email))) . '?s=128' }}" 
+                                 alt="{{ auth()->user()->name }}" 
+                                 class="rounded-circle" 
+                                 style="width: 80px; height: 80px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        </div>
+                        <h5 class="card-title mt-3 fw-bold">{{ auth()->user()->name }}</h5>
+                        <p class="text-muted small">{{ auth()->user()->email }}</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="{{ route('profile.show') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-user me-1"></i> Profile
+                            </a>
+                            <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endauth
+        </div>
     </div>
 </div>
 

@@ -66,9 +66,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $profileImagePath = null;
+        $imagePath = null;
         if (request()->hasFile('profile_image')) {
-            $profileImagePath = request()->file('profile_image')->store('profile-images', 'public');
+            $imagePath = request()->file('profile_image')->store('profile-images', 'public');
         }
 
         return User::create([
@@ -76,7 +76,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'] ?? 'user', // Use selected role or default to user
-            'profile_image' => $profileImagePath,
+            'image' => $imagePath,
         ]);
     }
 }
