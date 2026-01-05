@@ -58,8 +58,11 @@
                                     </span>
                                 @enderror
                                 <small class="text-muted">{{ __('Upload a new profile photo (max 2MB, jpeg, png, jpg, gif)') }}</small>
+
                                 <div class="mt-2">
-                                    <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?s=120' }}" alt="{{ $user->name }}" class="rounded" style="width:96px;height:96px;object-fit:cover;">
+                                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="rounded" style="width:96px;height:96px;object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=96&background=random'">
+                                    
+                                    <small class="text-muted d-block">{{ __('Current Profile Photo') }}</small>
                                     <small class="text-muted d-block">{{ __('Current Profile Photo') }}</small>
                                 </div>
                             </div>

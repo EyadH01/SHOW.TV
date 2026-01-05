@@ -8,6 +8,31 @@ use Illuminate\Support\Str;
 
 class ImageService
 {
+    private $gdAvailable;
+
+    public function __construct()
+    {
+        $this->gdAvailable = extension_loaded('gd');
+    }
+
+    /**
+     * Check if GD extension is available
+     */
+    private function isGdAvailable()
+    {
+        return $this->gdAvailable;
+    }
+
+    /**
+     * Validate GD extension is available for image processing
+     */
+    private function validateGdExtension()
+    {
+        if (!$this->isGdAvailable()) {
+            throw new \Exception('GD extension is not available. Please install PHP GD extension for image processing.');
+        }
+    }
+
     /**
      * Process and store user profile image
      */
@@ -47,7 +72,6 @@ class ImageService
         
         return false;
     }
-
 
     /**
      * Get full URL for image path
@@ -125,6 +149,21 @@ class ImageService
     {
         $sourcePath = $file->getPathname();
         
+        // Check if GD is available for processing
+        if ($this->isGdAvailable()) {
+            return $this->processWithGd($sourcePath, $filename);
+        } else {
+            return $this->storeWithoutProcessing($file, $filename);
+        }
+    }
+
+    /**
+     * Process image with GD extension
+     */
+    private function processWithGd($sourcePath, $filename)
+    {
+        $this->validateGdExtension();
+        
         // Get image info
         $imageInfo = getimagesize($sourcePath);
         if (!$imageInfo) {
@@ -134,6 +173,7 @@ class ImageService
         [$width, $height, $type] = $imageInfo;
         
         // Create image resource based on type
+        $source = null;
         switch ($type) {
             case IMAGETYPE_JPEG:
                 $source = imagecreatefromjpeg($sourcePath);
@@ -146,6 +186,10 @@ class ImageService
                 break;
             default:
                 throw new \Exception('Unsupported image type.');
+        }
+        
+        if (!$source) {
+            throw new \Exception('Failed to create image resource.');
         }
         
         // Calculate new dimensions (max 800px width/height)
@@ -195,10 +239,35 @@ class ImageService
         $thumbnailPath = "profile-images/thumbnails/{$filename}";
         $this->saveImage($thumbnail, $thumbnailPath, $type);
         
-        // Note: imagedestroy is deprecated in PHP 8+ and will be removed in PHP 9
-        // Modern PHP handles memory management automatically
+
+        // Clean up resources - PHP's garbage collection handles this automatically
+        unset($source, $resized, $thumbnail);
         
         return $mainPath;
+    }
+
+    /**
+     * Store image without GD processing (fallback)
+     */
+    private function storeWithoutProcessing(UploadedFile $file, $filename)
+    {
+        // Store the file as-is without processing
+        $path = "profile-images/{$filename}";
+        $fullPath = storage_path("app/public/{$path}");
+        
+        // Ensure directory exists
+        $directory = dirname($fullPath);
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+        
+        // Copy file to storage
+        if (!$file->move(dirname($fullPath), basename($fullPath))) {
+            throw new \Exception('Failed to store image file.');
+        }
+        
+        // Don't create thumbnail without GD
+        return $path;
     }
 
     /**

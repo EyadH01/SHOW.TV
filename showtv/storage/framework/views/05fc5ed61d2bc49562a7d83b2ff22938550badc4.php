@@ -5,18 +5,13 @@
             <div class="card">
                 <div class="card-header"><?php echo e(__('Profile')); ?></div>
 
+
                 <div class="card-body text-center">
                     <?php if(session('status')): ?>
                         <div class="alert alert-success"><?php echo e(session('status')); ?></div>
                     <?php endif; ?>
 
-                    <?php if($user->image): ?>
-                        <img src="<?php echo e(asset('storage/' . $user->image)); ?>" alt="<?php echo e($user->name); ?>" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;">
-                    <?php else: ?>
-                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3" style="width:150px;height:150px;">
-                            <i class="fas fa-user fa-3x text-muted"></i>
-                        </div>
-                    <?php endif; ?>
+                    <img src="<?php echo e($user->avatar_url); ?>" alt="<?php echo e($user->name); ?>" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=<?php echo e(urlencode($user->name)); ?>&size=150&background=random'">
                     <h4><?php echo e($user->name); ?></h4>
                     <p class="text-muted"><?php echo e($user->email); ?></p>
 

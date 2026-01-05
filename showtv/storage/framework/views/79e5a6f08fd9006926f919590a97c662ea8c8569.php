@@ -446,9 +446,10 @@
                         </li>
                     <?php else: ?>
                         <li class="nav-item dropdown">
+
                             <a class="nav-link dropdown-toggle d-flex flex-column align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <?php if(Auth::user()->profile_image): ?>
-                                    <img src="<?php echo e(asset('storage/' . Auth::user()->profile_image)); ?>" alt="<?php echo e(Auth::user()->name); ?>" class="rounded-circle mb-1" style="width: 40px; height: 40px; object-fit: cover;">
+                                <?php if(Auth::user()->image): ?>
+                                    <img src="<?php echo e(asset('storage/' . Auth::user()->image)); ?>" alt="<?php echo e(Auth::user()->name); ?>" class="rounded-circle mb-1" style="width: 40px; height: 40px; object-fit: cover;">
                                 <?php else: ?>
                                     <i class="fas fa-user-circle fa-2x mb-1"></i>
                                 <?php endif; ?>

@@ -443,9 +443,10 @@
                         </li>
                     @else
                         <li class="nav-item dropdown">
+
                             <a class="nav-link dropdown-toggle d-flex flex-column align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                @if(Auth::user()->profile_image)
-                                    <img src="{{ asset('storage/' . Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" class="rounded-circle mb-1" style="width: 40px; height: 40px; object-fit: cover;">
+                                @if(Auth::user()->image)
+                                    <img src="{{ asset('storage/' . Auth::user()->image) }}" alt="{{ Auth::user()->name }}" class="rounded-circle mb-1" style="width: 40px; height: 40px; object-fit: cover;">
                                 @else
                                     <i class="fas fa-user-circle fa-2x mb-1"></i>
                                 @endif

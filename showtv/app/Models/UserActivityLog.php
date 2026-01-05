@@ -14,6 +14,7 @@ class UserActivityLog extends Model
      *
      * @var array<int, string>
      */
+
     protected $fillable = [
         'user_id',
         'activity_type',
@@ -30,6 +31,7 @@ class UserActivityLog extends Model
         'metadata',
         'status',
         'description',
+        'updated_at',
     ];
 
     /**

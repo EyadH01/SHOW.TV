@@ -13,3 +13,10 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+/storage/logs/*.log
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*.php
+!/storage/framework/views/.gitignore
+/storage/app/public/profile-images/*
+!/storage/app/public/profile-images/.gitignore

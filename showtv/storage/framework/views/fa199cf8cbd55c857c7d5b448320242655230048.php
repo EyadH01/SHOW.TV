@@ -77,10 +77,11 @@
                 <div class="col-md-3 col-lg-2 col-6 mb-4">
                     <div class="user-card text-center">
                         <div class="user-avatar-container mb-2">
-                            <img src="<?php echo e(Storage::url($user->image)); ?>" 
-                                 alt="<?php echo e($user->name); ?>" 
-                                 class="user-avatar img-fluid rounded-circle"
-                                 style="width: 80px; height: 80px; object-fit: cover;">
+
+                       <img src="<?php echo e($user->avatar_url); ?>" 
+                           alt="<?php echo e($user->name); ?>" 
+                           class="user-avatar img-fluid rounded-circle"
+                           style="width: 80px; height: 80px; object-fit: cover;">
                             <?php if(Auth::check() && Auth::user()->id === $user->id): ?>
                                 <span class="badge bg-success position-absolute" style="top: 5px; right: 5px;">
                                     <i class="fas fa-user-check"></i>

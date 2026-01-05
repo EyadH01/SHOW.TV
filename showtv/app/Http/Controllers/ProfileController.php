@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ImageService;
 
 class ProfileController extends Controller
 {
@@ -64,11 +66,14 @@ class ProfileController extends Controller
         return view('profile.edit', compact('user'));
     }
 
+
     // Update profile with enhanced fields
     public function update(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+        
+        $imageService = new ImageService();
 
         // Enhanced validation rules
         $data = $request->validate([
@@ -113,16 +118,20 @@ class ProfileController extends Controller
             'youtube_url.url' => 'Please enter a valid YouTube URL.',
         ]);
 
-        // Handle image upload
+        // Handle image upload with ImageService
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($user->image && Storage::disk('public')->exists($user->image)) {
-                Storage::disk('public')->delete($user->image);
+            try {
+                // Delete old image if exists
+                if ($user->image) {
+                    $imageService->deleteProfileImage($user->image);
+                }
+                
+                // Process and store new image
+                $imagePath = $imageService->storeProfileImage($request->file('image'), $user->id);
+                $data['image'] = $imagePath;
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => 'Failed to process image: ' . $e->getMessage()]);
             }
-            
-            // Store new image
-            $path = $request->file('image')->store('profile-images', 'public');
-            $data['image'] = $path;
         }
 
         // Update user profile
@@ -139,14 +148,17 @@ class ProfileController extends Controller
         // Refresh the authenticated user session with updated data
         Auth::setUser($user);
 
-        return redirect()->route('profile.show')->with('status', 'Profile updated successfully!');
+        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
     }
+
 
     // Delete user account
     public function destroy(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+        
+        $imageService = new ImageService();
 
         // Validate password confirmation
         $request->validate([
@@ -157,9 +169,9 @@ class ProfileController extends Controller
             return back()->withErrors(['password' => 'The password is incorrect.']);
         }
 
-        // Delete user profile image
-        if ($user->image && Storage::disk('public')->exists($user->image)) {
-            Storage::disk('public')->delete($user->image);
+        // Delete user profile image and thumbnails
+        if ($user->image) {
+            $imageService->deleteProfileImage($user->image);
         }
 
         // Log account deletion activity
@@ -181,7 +193,8 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('welcome')->with('status', 'Your account has been deleted successfully.');
+
+        return redirect()->route('welcome')->with('success', 'Your account has been deleted successfully.');
     }
 
     // Show settings form

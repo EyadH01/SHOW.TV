@@ -222,4 +222,38 @@ class User extends Authenticatable
     {
         return $query->where('role', $role);
     }
+
+    /**
+     * Get a usable avatar URL for the user.
+     * Tries storage path, then public path, then returns fallback image.
+     *
+     * @return string|null
+     */
+    public function getAvatarUrlAttribute()
+    {
+        // No image set -> fallback
+        if (empty($this->image)) {
+            return asset('images/show.jpeg');
+        }
+
+        // If the image is already a full URL
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+
+        // Check storage/app/public/<path>
+        $storagePath = storage_path('app/public/' . $this->image);
+        if (file_exists($storagePath)) {
+            return asset('storage/' . $this->image);
+        }
+
+        // Check public/<path>
+        $publicPath = public_path(ltrim($this->image, '/'));
+        if (file_exists($publicPath)) {
+            return asset(ltrim($this->image, '/'));
+        }
+
+        // Last resort: fallback image
+        return asset('images/show.jpeg');
+    }
 }
